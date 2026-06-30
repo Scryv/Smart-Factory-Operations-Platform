@@ -18,23 +18,25 @@ type CNC struct {
 	MachineID        string
 	Status           string //RUN MANTINANS REBot
 	PartsProduced    int    //2 to 5 but penalty when things dont doe what suposed to do
-	Temperature      float32
+	Temperature      int
 	PowerConsumption float32
 	Vibration        float32
 	SpindleSpeed     int
 
-	MaintenanceTime time.Time
+	MaintenanceTime   time.Time
+	MaintenanceReason string
 }
 
 type robotArms struct {
 	MachineID        string
 	Status           string //RUN MANTINANS REBot
 	PartsMoved       int
-	Temperature      float32
+	Temperature      int
 	PowerConsumption float32
 	Vibration        float32
 
-	MaintenanceTime time.Time
+	MaintenanceTime   time.Time
+	MaintenanceReason string
 }
 
 var maintenanceLogs []MaintenanceTab
@@ -45,16 +47,21 @@ func productGenCNC(m *CNC) {
 	currentTime := time.Now()
 	switch m.Status {
 	case "running":
+		if m.Temperature > 55 {
+			m.Status = "maintenance"
+			m.MaintenanceReason = "Overheating"
+		}
+
+	case "maintenance":
 		MaintenanceTest := MaintenanceTab{
 			MachineID:           m.MachineID,
 			MaintenanceStart:    currentTime,
 			MaintenanceEnd:      currentTime,
 			MaintenanceDuration: currentTime,
-			Reason:              "bc fuh nig",
+			Reason:              m.MaintenanceReason,
 		}
 		maintenanceLogs = append(maintenanceLogs, MaintenanceTest)
 		fmt.Println(maintenanceLogs)
-	case "maintenance":
 
 	default:
 		log.Println("not a valid status found for ", m.MachineID)
@@ -79,41 +86,45 @@ func main() {
 	currentTime := time.Now()
 
 	cnc := CNC{
-		MachineID:        "CNC-1",
-		Status:           "running",
-		PartsProduced:    0,
-		Temperature:      0.0,
-		PowerConsumption: 0.0,
-		Vibration:        0.0,
-		SpindleSpeed:     0,
+		MachineID:         "CNC-1",
+		Status:            "running",
+		PartsProduced:     0,
+		Temperature:       0,
+		PowerConsumption:  0.0,
+		Vibration:         0.0,
+		SpindleSpeed:      0,
+		MaintenanceReason: "none",
 	}
 	robotArm := robotArms{
-		MachineID:        "RobotARM-1",
-		Status:           "running",
-		PartsMoved:       0,
-		Temperature:      0.0,
-		PowerConsumption: 0.0,
-		Vibration:        0.0,
-		MaintenanceTime:  currentTime,
+		MachineID:         "RobotARM-1",
+		Status:            "running",
+		PartsMoved:        0,
+		Temperature:       0,
+		PowerConsumption:  0.0,
+		Vibration:         0.0,
+		MaintenanceTime:   currentTime,
+		MaintenanceReason: "none",
 	}
 	cnc1 := CNC{
-		MachineID:        "CNC-2",
-		Status:           "running",
-		PartsProduced:    0,
-		Temperature:      0.0,
-		PowerConsumption: 0.0,
-		Vibration:        0.0,
-		MaintenanceTime:  currentTime,
-		SpindleSpeed:     0,
+		MachineID:         "CNC-2",
+		Status:            "running",
+		PartsProduced:     0,
+		Temperature:       0,
+		PowerConsumption:  0.0,
+		Vibration:         0.0,
+		MaintenanceTime:   currentTime,
+		SpindleSpeed:      0,
+		MaintenanceReason: "none",
 	}
 	robotArm1 := robotArms{
-		MachineID:        "RobotARM-2",
-		Status:           "running",
-		PartsMoved:       0,
-		Temperature:      0.0,
-		PowerConsumption: 0.0,
-		Vibration:        0.0,
-		MaintenanceTime:  currentTime,
+		MachineID:         "RobotARM-2",
+		Status:            "running",
+		PartsMoved:        0,
+		Temperature:       0,
+		PowerConsumption:  0.0,
+		Vibration:         0.0,
+		MaintenanceTime:   currentTime,
+		MaintenanceReason: "none",
 	}
 
 	cncMachine := []*CNC{
