@@ -24,6 +24,7 @@ type CNC struct {
 func ProductGenCNC(m *CNC) {
 	//RandomFloatingNumber := rand.Float64()
 	//fmt.Println(RandomFloatingNumber)
+
 	switch m.Status { //add bog down if under 15% of expected RPM
 	case "running":
 		currentTime := time.Now()
