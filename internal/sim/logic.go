@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"time"
 )
-
-func MachineSimulator() {
-	currentTime := time.Now()
-
-	cncMachine := []*CNC{
+var currentTime = time.Now()
+var (
+	CncMachine = []*CNC{
 		{
 			MachineID:          "CNC-1",
 			Status:             "running",
@@ -33,8 +31,9 @@ func MachineSimulator() {
 			MaintenanceReason:  "none",
 		},
 	}
-
-	armMachine := []*robotArms{
+)
+var (
+	ArmMachine = []*robotArms{
 		{
 			MachineID:         "RobotARM-1",
 			Status:            "running",
@@ -56,16 +55,18 @@ func MachineSimulator() {
 			MaintenanceReason: "none",
 		},
 	}
+)
 
+func MachineSimulator() {
 	for {
 
-		for _, cncM := range cncMachine {
+		for _, cncM := range CncMachine {
 			fmt.Println(cncM.MachineID)
 			ProductGenCNC(cncM)
 			fmt.Println(cncM.PartsProduced)
 
 		}
-		for _, armM := range armMachine {
+		for _, armM := range ArmMachine {
 			fmt.Println(armM.MachineID)
 			ProductGenARM(armM)
 		}
