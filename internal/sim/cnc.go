@@ -56,9 +56,13 @@ func ProductGenCNC(m *CNC) {
 				m.MaintenanceReason = bogDown
 				m.MaintenanceTime = currentTime
 			}
-			m.PartsProduced += (rand.IntN(2) + 1)
+			dRp := (rand.IntN(2) + 1) 
+			m.PartsProduced += dRp
+			TotalParts += dRp
 		} else {
-			m.PartsProduced += (rand.IntN(4) + 2)
+			dRp := (rand.IntN(2) + 2) 
+			m.PartsProduced += dRp
+			TotalParts += dRp
 		}
 
 	case "maintenance":

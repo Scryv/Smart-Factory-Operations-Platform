@@ -13,44 +13,55 @@ import (
 
 
 
-var cpuGauge = promauto.NewGaugeVec(
+var partsProduced = promauto.NewGaugeVec(
 	prometheus.GaugeOpts{
-		Name: "machine_cpu_percent",
-		Help: "CPU usage of a machine",
+		Name: "parts_produced",
+		Help: "Shows how many parts produced",
 	},
 	[]string{"machine", "namespace"},
 )
 
-var extra = promauto.NewGaugeVec(
+var machineMaintenance = promauto.NewGaugeVec(
 	prometheus.GaugeOpts{
-		Name: "dsdsds",
-		Help: "CPU usage of a",
+		Name: "maintenanceCheck",
+		Help: "If Machine is in maintenance",
 	},
 	[]string{"machine", "namespace"},
 )
 
-var memGauge = promauto.NewGaugeVec(
+var totalOutput = promauto.NewGaugeVec(
 	prometheus.GaugeOpts{
-		Name: "machine_memory_mb",
-		Help: "Memory usage of a machine",
+		Name: "totalPartsProduced",
+		Help: "All Parts Produced in total",
+	},
+	[]string{"name", "namespace"},
+)
+
+var tempMachine = promauto.NewGaugeVec(
+	prometheus.GaugeOpts{
+		Name: "temp_per_machine",
+		Help: "Shows temperature of machine",
 	},
 	[]string{"machine", "namespace"},
 )
 
 func updateMetrics() {
 	for _, m := range sim.CncMachine {
+		totalOutput.WithLabelValues("TotalPartsProduced", "Total Parts").Set(float64(sim.TotalParts))
 		switch m.Status{
 		case "running":
-			extra.DeleteLabelValues(m.MachineID, "maintenance")
-			cpuGauge.WithLabelValues(m.MachineID, m.Status).Set(float64(m.PartsProduced))
-		    memGauge.WithLabelValues(m.MachineID, m.Status).Set(float64(m.Temperature))
+			machineMaintenance.DeleteLabelValues(m.MachineID, "maintenance")
+			partsProduced.WithLabelValues(m.MachineID, m.Status).Set(float64(m.PartsProduced))
+		    tempMachine.WithLabelValues(m.MachineID, m.Status).Set(float64(m.Temperature))
+			
 			
 		case "maintenance":
-            extra.WithLabelValues(m.MachineID, m.Status).Set(1)		
+            machineMaintenance.WithLabelValues(m.MachineID, m.Status).Set(1)		
 		default:
 			slog.Error("No clue why this is in maintenance?")
 		
 		}
+
 	}
 }
 func bf() {
